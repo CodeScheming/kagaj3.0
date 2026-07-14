@@ -4,6 +4,8 @@ backend/__pycache__/
 *.py[cod]
 *$py.class
 backend/sql_app.db
+backend/wallet.json
+backend/uploads/
 .env
 
 # Next.js / Frontend
