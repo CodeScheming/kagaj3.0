@@ -1,7 +1,11 @@
 export const API_URL = "http://localhost:8000";
 
+export function getAuthToken() {
+  return typeof window !== 'undefined' ? localStorage.getItem('token') : null;
+}
+
 export async function fetchAPI(endpoint: string, options: RequestInit = {}) {
-  const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
+  const token = getAuthToken();
   
   const headers: Record<string, string> = {
     'Content-Type': 'application/json',

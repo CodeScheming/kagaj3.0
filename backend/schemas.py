@@ -5,6 +5,8 @@ from datetime import datetime
 class ArticleBase(BaseModel):
     title: str
     content: str
+    cover_image_url: Optional[str] = None
+    tags: Optional[str] = None
 
 class ArticleCreate(ArticleBase):
     pass
@@ -12,12 +14,17 @@ class ArticleCreate(ArticleBase):
 class ArticleUpdate(BaseModel):
     title: Optional[str] = None
     content: Optional[str] = None
+    cover_image_url: Optional[str] = None
+    tags: Optional[str] = None
 
 class ArticleResponse(ArticleBase):
     id: int
+    content_hash: Optional[str] = None
+    tx_signature: Optional[str] = None
     created_at: datetime
     updated_at: datetime
     author_id: int
+    author_wallet: Optional[str] = None
 
     class Config:
         from_attributes = True
@@ -26,11 +33,15 @@ class UserBase(BaseModel):
     username: str
     email: EmailStr
 
+class UserUpdate(BaseModel):
+    wallet_address: Optional[str] = None
+
 class UserCreate(UserBase):
     password: str
 
 class UserResponse(UserBase):
     id: int
+    wallet_address: Optional[str] = None
     
     class Config:
         from_attributes = True

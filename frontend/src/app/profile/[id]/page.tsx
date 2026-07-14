@@ -3,6 +3,7 @@
 import { useEffect, useState, use } from 'react';
 import Link from 'next/link';
 import { fetchAPI } from '@/lib/api';
+import { useAuth } from '@/context/AuthContext';
 
 interface Article {
   id: number;
@@ -15,6 +16,7 @@ interface UserProfile {
   id: number;
   username: string;
   email: string;
+  wallet_address?: string;
   articles: Article[];
 }
 
@@ -23,13 +25,40 @@ export default function ProfilePage({ params }: { params: Promise<{ id: string }
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  
+  // Wallet edit state
+  const { user } = useAuth();
+  const [isEditingWallet, setIsEditingWallet] = useState(false);
+  const [walletInput, setWalletInput] = useState('');
+  const [saveLoading, setSaveLoading] = useState(false);
+
+  const isOwnProfile = user && profile && user.id === profile.id;
 
   useEffect(() => {
     fetchAPI(`/users/${unwrappedParams.id}`)
-      .then(setProfile)
+      .then(data => {
+        setProfile(data);
+        setWalletInput(data.wallet_address || '');
+      })
       .catch(() => setError('Failed to load profile'))
       .finally(() => setLoading(false));
   }, [unwrappedParams.id]);
+
+  const handleSaveWallet = async () => {
+    setSaveLoading(true);
+    try {
+      const updatedUser = await fetchAPI('/users/me', {
+        method: 'PUT',
+        body: JSON.stringify({ wallet_address: walletInput }),
+      });
+      setProfile(prev => prev ? { ...prev, wallet_address: updatedUser.wallet_address } : null);
+      setIsEditingWallet(false);
+    } catch (err: any) {
+      alert(err.message || 'Failed to update wallet address');
+    } finally {
+      setSaveLoading(false);
+    }
+  };
 
   if (loading) return <div style={{ textAlign: 'center', marginTop: '50px' }}>Loading profile...</div>;
   if (error || !profile) return <div style={{ textAlign: 'center', color: '#ef4444', marginTop: '50px' }}>{error || 'Profile not found'}</div>;
@@ -42,6 +71,36 @@ export default function ProfilePage({ params }: { params: Promise<{ id: string }
         </div>
         <h1 className="page-title" style={{ marginBottom: '5px' }}>{profile.username}</h1>
         <p style={{ color: 'var(--text-secondary)' }}>Member</p>
+        
+        {/* Wallet Address Section */}
+        <div style={{ marginTop: '20px', padding: '15px', background: 'rgba(255,255,255,0.05)', borderRadius: '8px', display: 'inline-block', textAlign: 'left', minWidth: '300px' }}>
+          <div style={{ fontSize: '0.9rem', color: 'var(--text-secondary)', marginBottom: '5px' }}>Solana Wallet Address</div>
+          {isOwnProfile && isEditingWallet ? (
+            <div>
+              <input 
+                type="text" 
+                value={walletInput} 
+                onChange={e => setWalletInput(e.target.value)} 
+                className="form-input"
+                placeholder="Enter Solana public key"
+                style={{ marginBottom: '10px' }}
+              />
+              <div style={{ display: 'flex', gap: '10px' }}>
+                <button onClick={handleSaveWallet} disabled={saveLoading} className="btn btn-primary" style={{ flex: 1 }}>{saveLoading ? 'Saving...' : 'Save'}</button>
+                <button onClick={() => setIsEditingWallet(false)} className="btn btn-secondary" style={{ flex: 1 }}>Cancel</button>
+              </div>
+            </div>
+          ) : (
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '20px' }}>
+              <span style={{ fontFamily: 'monospace', color: profile.wallet_address ? 'var(--text-primary)' : 'var(--text-muted)' }}>
+                {profile.wallet_address || 'Not set'}
+              </span>
+              {isOwnProfile && (
+                <button onClick={() => setIsEditingWallet(true)} className="btn btn-secondary" style={{ padding: '4px 10px', fontSize: '0.8rem' }}>Edit</button>
+              )}
+            </div>
+          )}
+        </div>
       </div>
 
       <h2 style={{ fontSize: '1.5rem', marginBottom: '20px', paddingBottom: '10px', borderBottom: '1px solid var(--border-color)' }}>

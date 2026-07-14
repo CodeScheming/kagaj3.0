@@ -201,3 +201,38 @@ a:hover {
 .nav-link:hover {
   color: var(--text-primary);
 }
+
+/* TipTap Editor Styles */
+.tiptap-editor .ProseMirror {
+  outline: none;
+  min-height: 300px;
+}
+.tiptap-editor .ProseMirror p {
+  margin-bottom: 1em;
+}
+.tiptap-editor .ProseMirror h1, .tiptap-editor .ProseMirror h2, .tiptap-editor .ProseMirror h3 {
+  margin-top: 1.5em;
+  margin-bottom: 0.5em;
+}
+.tiptap-editor .ProseMirror ul, .tiptap-editor .ProseMirror ol {
+  padding-left: 2em;
+  margin-bottom: 1em;
+}
+
+/* Parsed Rich Text Content */
+.rich-text-content h1, .rich-text-content h2, .rich-text-content h3 {
+  margin-top: 1.5em;
+  margin-bottom: 0.5em;
+  color: var(--text-primary);
+}
+.rich-text-content p {
+  margin-bottom: 1em;
+}
+.rich-text-content ul, .rich-text-content ol {
+  margin-bottom: 1em;
+  padding-left: 2em;
+}
+.rich-text-content a {
+  color: var(--accent-color);
+  text-decoration: underline;
+}

@@ -1,15 +1,22 @@
-from fastapi import FastAPI, Depends, HTTPException, status
+from fastapi import FastAPI, Depends, HTTPException, status, UploadFile, File
 from fastapi.security import OAuth2PasswordRequestForm
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 from sqlalchemy.orm import Session
-from typing import List
+from typing import List, Optional
 from datetime import timedelta
+import shutil
+import uuid
+import os
 
 import models, schemas, crud, auth, database
 
 models.Base.metadata.create_all(bind=database.engine)
 
 app = FastAPI(title="Publishing Platform API")
+
+os.makedirs("uploads", exist_ok=True)
+app.mount("/uploads", StaticFiles(directory="uploads"), name="uploads")
 
 # Configure CORS for Next.js frontend
 app.add_middleware(
@@ -50,6 +57,10 @@ def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(), db:
 def read_users_me(current_user: models.User = Depends(auth.get_current_user)):
     return current_user
 
+@app.put("/users/me", response_model=schemas.UserResponse)
+def update_user_me(user_update: schemas.UserUpdate, db: Session = Depends(auth.get_db), current_user: models.User = Depends(auth.get_current_user)):
+    return crud.update_user(db=db, user_id=current_user.id, user_update=user_update)
+
 @app.get("/users/{user_id}", response_model=schemas.UserProfile)
 def read_user_profile(user_id: int, db: Session = Depends(auth.get_db)):
     db_user = crud.get_user(db, user_id=user_id)
@@ -62,9 +73,18 @@ def create_article(article: schemas.ArticleCreate, db: Session = Depends(auth.ge
     return crud.create_user_article(db=db, article=article, user_id=current_user.id)
 
 @app.get("/articles", response_model=List[schemas.ArticleResponse])
-def read_articles(skip: int = 0, limit: int = 100, db: Session = Depends(auth.get_db)):
-    articles = crud.get_articles(db, skip=skip, limit=limit)
+def read_articles(skip: int = 0, limit: int = 100, search: Optional[str] = None, db: Session = Depends(auth.get_db)):
+    articles = crud.get_articles(db, skip=skip, limit=limit, search=search)
     return articles
+
+@app.post("/upload")
+async def upload_image(file: UploadFile = File(...), current_user: models.User = Depends(auth.get_current_user)):
+    ext = file.filename.split('.')[-1]
+    filename = f"{uuid.uuid4()}.{ext}"
+    file_path = f"uploads/{filename}"
+    with open(file_path, "wb") as buffer:
+        shutil.copyfileobj(file.file, buffer)
+    return {"url": f"http://localhost:8000/uploads/{filename}"}
 
 @app.get("/articles/{article_id}", response_model=schemas.ArticleResponse)
 def read_article(article_id: int, db: Session = Depends(auth.get_db)):
