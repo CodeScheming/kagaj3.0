@@ -1,3 +1,6 @@
+import os
+import logging
+from contextlib import asynccontextmanager
 from fastapi import FastAPI, Depends, HTTPException, status, UploadFile, File
 from fastapi.security import OAuth2PasswordRequestForm
 from fastapi.middleware.cors import CORSMiddleware
@@ -7,21 +10,50 @@ from typing import List, Optional
 from datetime import timedelta
 import shutil
 import uuid
-import os
 
 import models, schemas, crud, auth, database
 
-models.Base.metadata.create_all(bind=database.engine)
+# Configure logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
-app = FastAPI(title="Publishing Platform API")
+# Environment configuration
+FRONTEND_URL = os.getenv("FRONTEND_URL", "http://localhost:3000")
+BACKEND_URL = os.getenv("BACKEND_URL", "http://localhost:8000")
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    """Startup and shutdown events."""
+    # Startup: create tables and import articles
+    models.Base.metadata.create_all(bind=database.engine)
+    
+    # Import articles from external APIs
+    import import_articles
+    db = database.SessionLocal()
+    try:
+        import_articles.run_import(db)
+    except Exception as e:
+        logger.error(f"Article import failed: {e}")
+    finally:
+        db.close()
+    
+    yield
+    # Shutdown: nothing to clean up
+
+app = FastAPI(title="Kagaj Ko Katha — Publishing Platform API", lifespan=lifespan)
 
 os.makedirs("uploads", exist_ok=True)
 app.mount("/uploads", StaticFiles(directory="uploads"), name="uploads")
 
-# Configure CORS for Next.js frontend
+# Configure CORS — allow the frontend origin (supports both dev and production)
+allowed_origins = [FRONTEND_URL]
+# Also allow localhost variants for dev convenience
+if "localhost" not in FRONTEND_URL:
+    allowed_origins.extend(["http://localhost:3000", "http://127.0.0.1:3000"])
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000"],
+    allow_origins=allowed_origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -84,7 +116,7 @@ async def upload_image(file: UploadFile = File(...), current_user: models.User =
     file_path = f"uploads/{filename}"
     with open(file_path, "wb") as buffer:
         shutil.copyfileobj(file.file, buffer)
-    return {"url": f"http://localhost:8000/uploads/{filename}"}
+    return {"url": f"{BACKEND_URL}/uploads/{filename}"}
 
 @app.get("/articles/{article_id}", response_model=schemas.ArticleResponse)
 def read_article(article_id: int, db: Session = Depends(auth.get_db)):

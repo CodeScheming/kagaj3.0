@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { fetchAPI, getAuthToken } from '@/lib/api';
+import { fetchAPI, getAuthToken, API_URL } from '@/lib/api';
 import { useAuth } from '@/context/AuthContext';
 import RichTextEditor from '@/components/RichTextEditor';
 
@@ -34,7 +34,7 @@ export default function CreateArticlePage() {
     formData.append('file', file);
 
     try {
-      const response = await fetch('http://localhost:8000/upload', {
+      const response = await fetch(`${API_URL}/upload`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${getAuthToken()}`,

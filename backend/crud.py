@@ -48,6 +48,10 @@ def get_articles(db: Session, skip: int = 0, limit: int = 100, search: str = Non
 def get_article(db: Session, article_id: int):
     return db.query(models.Article).filter(models.Article.id == article_id).first()
 
+def get_article_by_source_slug(db: Session, source_slug: str):
+    """Check if an article with this source_slug already exists (for dedup on import)."""
+    return db.query(models.Article).filter(models.Article.source_slug == source_slug).first()
+
 def create_user_article(db: Session, article: schemas.ArticleCreate, user_id: int):
     # Generate SHA-256 hash
     content_hash = solana_utils.generate_article_hash(article.title, article.content)
@@ -80,6 +84,28 @@ def create_user_article(db: Session, article: schemas.ArticleCreate, user_id: in
     db.commit()
     db.refresh(db_article)
     
+    return db_article
+
+def create_article_direct(db: Session, title: str, content: str, excerpt: str,
+                          cover_image_url: str, article_type: str, source_slug: str,
+                          tags: str, author_id: int, created_at=None):
+    """Create an article directly without Solana hash/tx — used for importing external articles."""
+    db_article = models.Article(
+        title=title,
+        content=content,
+        excerpt=excerpt,
+        cover_image_url=cover_image_url,
+        article_type=article_type,
+        source_slug=source_slug,
+        tags=tags,
+        author_id=author_id,
+    )
+    if created_at:
+        db_article.created_at = created_at
+        db_article.updated_at = created_at
+    db.add(db_article)
+    db.commit()
+    db.refresh(db_article)
     return db_article
 
 def update_article(db: Session, article_id: int, article_update: schemas.ArticleUpdate):

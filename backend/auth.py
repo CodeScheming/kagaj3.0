@@ -1,3 +1,4 @@
+import os
 from datetime import datetime, timedelta
 from typing import Optional
 from jose import JWTError, jwt
@@ -8,7 +9,7 @@ from sqlalchemy.orm import Session
 
 import database, models
 
-SECRET_KEY = "super_secret_key_for_this_example_only"
+SECRET_KEY = os.getenv("SECRET_KEY", "super_secret_key_for_this_example_only")
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 60 * 24 * 7 # 7 days
 

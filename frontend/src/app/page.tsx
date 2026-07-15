@@ -8,10 +8,36 @@ interface Article {
   id: number;
   title: string;
   content: string;
+  excerpt?: string;
+  article_type?: string;
   created_at: string;
   author_id: number;
   cover_image_url?: string;
   tags?: string;
+}
+
+const TYPE_COLORS: Record<string, string> = {
+  article: '#6366f1',
+  blog: '#6366f1',
+  review: '#f59e0b',
+  poem: '#ec4899',
+  essay: '#10b981',
+  journal: '#8b5cf6',
+  other: '#6b7280',
+};
+
+function getTypeLabel(type?: string): string {
+  if (!type) return 'Article';
+  const labels: Record<string, string> = {
+    article: 'Article',
+    blog: 'Blog',
+    review: 'Review',
+    poem: 'Poem',
+    essay: 'Essay',
+    journal: 'Journal',
+    other: 'Writing',
+  };
+  return labels[type] || type.charAt(0).toUpperCase() + type.slice(1);
 }
 
 export default function Home() {
@@ -68,6 +94,25 @@ export default function Home() {
                     <div style={{ height: '150px', backgroundImage: `url(${article.cover_image_url})`, backgroundSize: 'cover', backgroundPosition: 'center' }} />
                   )}
                   <div style={{ padding: '20px', display: 'flex', flexDirection: 'column', flexGrow: 1 }}>
+                    {/* Article type badge */}
+                    {article.article_type && (
+                      <span style={{
+                        display: 'inline-block',
+                        width: 'fit-content',
+                        fontSize: '0.7rem',
+                        fontWeight: 600,
+                        letterSpacing: '0.05em',
+                        textTransform: 'uppercase',
+                        padding: '3px 10px',
+                        borderRadius: '20px',
+                        marginBottom: '10px',
+                        color: '#fff',
+                        background: TYPE_COLORS[article.article_type] || TYPE_COLORS.other,
+                      }}>
+                        {getTypeLabel(article.article_type)}
+                      </span>
+                    )}
+                    
                     <h2 style={{ fontSize: '1.25rem', marginBottom: '10px' }}>{article.title}</h2>
                     
                     {article.tags && (
@@ -81,8 +126,10 @@ export default function Home() {
                     )}
                     
                     <p style={{ color: 'var(--text-secondary)', marginBottom: '15px', flexGrow: 1 }}>
-                      {/* Strip HTML tags for preview */}
-                      {article.content.replace(/<[^>]+>/g, '').substring(0, 100)}...
+                      {article.excerpt
+                        ? article.excerpt.substring(0, 120) + (article.excerpt.length > 120 ? '...' : '')
+                        : article.content.replace(/<[^>]+>/g, '').substring(0, 100) + '...'
+                      }
                     </p>
                     <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>
                       {new Date(article.created_at).toLocaleDateString()}

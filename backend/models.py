@@ -21,6 +21,9 @@ class Article(Base):
     id = Column(Integer, primary_key=True, index=True)
     title = Column(String, index=True)
     content = Column(Text)
+    excerpt = Column(Text, nullable=True)
+    source_slug = Column(String, nullable=True, unique=True, index=True)
+    article_type = Column(String, nullable=True)  # blog, review, poem, essay, journal
     content_hash = Column(String, nullable=True)
     tx_signature = Column(String, nullable=True)
     cover_image_url = Column(String, nullable=True)
