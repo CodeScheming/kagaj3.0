@@ -114,6 +114,24 @@ def update_article(db: Session, article_id: int, article_update: schemas.Article
         update_data = article_update.model_dump(exclude_unset=True)
         for key, value in update_data.items():
             setattr(db_article, key, value)
+            
+        # Generate new hash for updated content
+        content_hash = solana_utils.generate_article_hash(db_article.title, db_article.content)
+        db_article.content_hash = content_hash
+        
+        # Publish update to Solana to verify the author
+        user = get_user(db, db_article.author_id)
+        article_proof = {
+            "article_id": db_article.id,
+            "author_wallet": user.wallet_address if user else None,
+            "content_hash": content_hash,
+            "published_at": db_article.created_at.isoformat(),
+            "license": "CC BY 4.0",
+            "is_update": True
+        }
+        tx_signature = solana_utils.publish_hash_to_solana(article_proof)
+        db_article.tx_signature = tx_signature
+        
         db.commit()
         db.refresh(db_article)
     return db_article
