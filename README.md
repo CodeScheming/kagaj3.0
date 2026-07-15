@@ -1,5 +1,5 @@
 <div align="center">
-  <h1>Kagaj Ko Katha 3.0 📝</h1>
+  <h1>Kagaj 3.0 📝</h1>
   <p><strong>A Home for Nepali Literature — Powered by Solana</strong></p>
   <a href="https://blogs.kagajkokatha.com">View Live Demo</a>
 </div>
@@ -7,7 +7,7 @@
 <br />
 
 ## 📖 The Vision
-Kagaj Ko Katha is a transition of a traditional literary platform into a Web3-empowered ecosystem. Our mission is to provide a beautiful, seamless reading and writing experience while solving the most critical issue in digital literature: **plagiarism and proof of authorship.**
+Kagaj 3.0(test by Kagaj ko katha) is a transition of a traditional literary platform into a Web3-empowered ecosystem. Our mission is to provide a beautiful, seamless reading and writing experience while solving the most critical issue in digital literature: **plagiarism and proof of authorship.**
 
 By integrating Solana, Kagaj 3.0 acts as a decentralized notary. It allows writers and poets to cryptographically sign their work, generating an immutable, timestamped proof of authorship on the blockchain. 
 
