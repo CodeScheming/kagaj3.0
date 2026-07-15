@@ -22,6 +22,8 @@ module.exports = {
       cwd: '/home/deployment/kagaj3.0/kagaj3.0/backend',
       script: '/home/deployment/kagaj3.0/kagaj3.0/backend/venv/bin/uvicorn',
       args: 'main:app --host 127.0.0.1 --port 8100',
+      interpreter: 'none',
+      exec_mode: 'fork',
       env: {
         SECRET_KEY: 'kagaj3_prod_secret_change_this_later',
         DATABASE_URL: 'sqlite:///./sql_app.db',
