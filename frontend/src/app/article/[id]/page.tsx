@@ -73,7 +73,7 @@ export default function ArticlePage({ params }: { params: Promise<{ id: string }
     setTipLoading(true);
     try {
       const recipientPubKey = new PublicKey(article.author_wallet);
-      const lamports = parseFloat(tipAmount) * LAMPORTS_PER_SOL;
+      const lamports = Math.round(parseFloat(tipAmount) * LAMPORTS_PER_SOL);
       
       const transaction = new Transaction().add(
           SystemProgram.transfer({
