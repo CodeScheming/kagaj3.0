@@ -86,10 +86,5 @@ The platform will be live at `http://localhost:3000`.
 
 ---
 
-## 🔮 Future Roadmap
-- **Tokenized Literature (NFTs):** Allow authors to mint their premium articles or poems as cNFTs using State Compression.
-- **Tipping System:** Integrate Solana Pay so readers can directly tip their favorite Nepali authors with USDC or SOL.
-- **Open Governance (Janamat):** Allow verified authors to vote on community literary awards and platform curation. 
-
 ---
 *Built with ❤️ in Nepal.*
