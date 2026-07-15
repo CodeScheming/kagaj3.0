@@ -5,7 +5,7 @@ module.exports = {
   apps: [
     {
       name: 'kagaj-frontend',
-      cwd: '/root/kagaj3.0/frontend',
+      cwd: '/home/deployment/kagaj3.0/kagaj3.0/frontend',
       script: 'node_modules/.bin/next',
       args: 'start -p 3100',
       env: {
@@ -19,8 +19,8 @@ module.exports = {
     },
     {
       name: 'kagaj-backend',
-      cwd: '/root/kagaj3.0/backend',
-      interpreter: '/root/kagaj3.0/backend/venv/bin/python',
+      cwd: '/home/deployment/kagaj3.0/kagaj3.0/backend',
+      interpreter: '/home/deployment/kagaj3.0/kagaj3.0/backend/venv/bin/python',
       script: '-m',
       args: 'uvicorn main:app --host 127.0.0.1 --port 8100',
       env: {

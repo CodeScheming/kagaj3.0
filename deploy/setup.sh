@@ -1,18 +1,18 @@
 #!/bin/bash
 # Kagaj Ko Katha — VPS Deployment Script
 # For blogs.kagajkokatha.com on Ubuntu VPS
-# Run as root: chmod +x deploy/setup.sh && ./deploy/setup.sh
+# Run from repo root: chmod +x deploy/setup.sh && ./deploy/setup.sh
 
 set -e
 
-APP_DIR="/root/kagaj3.0"
+APP_DIR="/home/deployment/kagaj3.0/kagaj3.0"
 
 echo "=== Kagaj Ko Katha — Deploying to blogs.kagajkokatha.com ==="
 
 # 1. System packages
 echo "[1/7] Checking system packages..."
 apt update -qq
-apt install -y -qq python3 python3-venv python3-pip nginx certbot python3-certbot-nginx git > /dev/null 2>&1
+apt install -y -qq python3 python3-venv python3-pip certbot python3-certbot-nginx > /dev/null 2>&1
 echo "       Done."
 
 # 2. Node.js
@@ -67,21 +67,18 @@ echo "       Done."
 echo "[7/7] Starting services with PM2..."
 pm2 delete kagaj-frontend 2>/dev/null || true
 pm2 delete kagaj-backend 2>/dev/null || true
-pm2 start deploy/ecosystem.config.js
+pm2 start "$APP_DIR/deploy/ecosystem.config.js"
 pm2 save
-pm2 startup systemd -u root --hp /root 2>/dev/null || true
+pm2 startup systemd 2>/dev/null || true
 
 echo ""
 echo "=== Deployment Complete ==="
 echo ""
 echo "Site: http://blogs.kagajkokatha.com (HTTP for now)"
 echo ""
-echo "Next steps:"
-echo "  1. Add DNS A record: blogs.kagajkokatha.com -> $(curl -s ifconfig.me)"
-echo "  2. After DNS propagates, get SSL:"
-echo "     certbot --nginx -d blogs.kagajkokatha.com"
-echo "  3. Check status: pm2 status"
-echo "  4. View logs: pm2 logs"
+echo "For SSL: certbot --nginx -d blogs.kagajkokatha.com"
+echo "Check status: pm2 status"
+echo "View logs: pm2 logs"
 echo ""
 echo "Auto-created author accounts:"
 echo "  Username: author_name (lowercase, underscores)"
