@@ -154,7 +154,7 @@ export default function ArticlePage({ params }: { params: Promise<{ id: string }
             <p><strong>Owner Wallet:</strong> <span style={{ fontFamily: 'monospace' }}>{article.author_wallet || 'Not set'}</span></p>
             <p><strong>Publication Time:</strong> {new Date(article.created_at).toLocaleString()}</p>
             <p><strong>Content Hash:</strong> <span style={{ fontFamily: 'monospace', wordBreak: 'break-all' }}>{article.content_hash}</span></p>
-            <p><strong>Transaction:</strong> <a href={`https://explorer.solana.com/tx/${article.tx_signature}?cluster=devnet`} target="_blank" rel="noopener noreferrer" style={{ color: 'var(--accent-color)', textDecoration: 'underline', fontFamily: 'monospace', wordBreak: 'break-all' }}>{article.tx_signature}</a></p>
+            <p><strong>Transaction:</strong> <a href={`https://explorer.solana.com/tx/${article.tx_signature}?cluster=testnet`} target="_blank" rel="noopener noreferrer" style={{ color: 'var(--accent-color)', textDecoration: 'underline', fontFamily: 'monospace', wordBreak: 'break-all' }}>{article.tx_signature}</a></p>
           </div>
         </div>
       )}

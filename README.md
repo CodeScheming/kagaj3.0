@@ -49,7 +49,7 @@ Kagaj 3.0 bridges this gap using Solana. When an author publishes or updates a p
 
 ## ✨ Key Features
 
-- **Web3 Authorship Verification:** Instantly sign and verify articles on the Solana Devnet.
+- **Web3 Authorship Verification:** Instantly sign and verify articles on the Solana Testnet.
 - **Legacy Author Migration:** A custom backend script that pulled existing literature from the Kagaj 2.0 API, automatically generated claimable Web3 accounts for legacy authors, and seeded the database.
 - **Dynamic Content Types:** Dedicated badges and styling for Poems, Essays, Reviews, and Articles.
 - **Rich Text Editor:** A seamless writing experience built right into the platform.

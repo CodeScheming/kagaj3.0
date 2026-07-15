@@ -13,7 +13,7 @@ logger = logging.getLogger(__name__)
 
 MEMO_PROGRAM_ID = Pubkey.from_string("MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr")
 WALLET_PATH = "wallet.json"
-DEVNET_URL = "https://api.devnet.solana.com"
+TESTNET_URL = "https://api.testnet.solana.com"
 
 def generate_article_hash(title: str, content: str) -> str:
     """Generates a SHA-256 hash from article title and content."""
@@ -34,17 +34,17 @@ def get_keypair() -> Keypair:
     kp = Keypair()
     with open(WALLET_PATH, "w") as f:
         json.dump(list(kp.secret()), f)
-    logger.warning(f"Generated new wallet: {kp.pubkey()} - Please fund with Devnet SOL if transactions fail.")
+    logger.warning(f"Generated new wallet: {kp.pubkey()} - Please fund with Testnet SOL if transactions fail.")
     return kp
 
 def publish_hash_to_solana(article_proof: dict) -> str:
     """
     Builds a transaction with a Memo instruction containing the JSON proof,
-    signs it, and attempts to send it to Solana Devnet.
+    signs it, and attempts to send it to Solana Testnet.
     Returns the transaction signature.
     """
     kp = get_keypair()
-    client = Client(DEVNET_URL)
+    client = Client(TESTNET_URL)
     
     proof_json_str = json.dumps(article_proof)
     
@@ -52,7 +52,7 @@ def publish_hash_to_solana(article_proof: dict) -> str:
     try:
         balance_resp = client.get_balance(kp.pubkey())
         if balance_resp.value == 0:
-            logger.info("Wallet balance is 0. Requesting Devnet airdrop (this may fail due to rate limits)...")
+            logger.info("Wallet balance is 0. Requesting Testnet airdrop (this may fail due to rate limits)...")
             # Request 1 SOL (1_000_000_000 lamports)
             client.request_airdrop(kp.pubkey(), 1_000_000_000)
     except Exception as e:
