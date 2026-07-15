@@ -20,9 +20,8 @@ module.exports = {
     {
       name: 'kagaj-backend',
       cwd: '/home/deployment/kagaj3.0/kagaj3.0/backend',
-      interpreter: '/home/deployment/kagaj3.0/kagaj3.0/backend/venv/bin/python',
-      script: '-m',
-      args: 'uvicorn main:app --host 127.0.0.1 --port 8100',
+      script: '/home/deployment/kagaj3.0/kagaj3.0/backend/venv/bin/uvicorn',
+      args: 'main:app --host 127.0.0.1 --port 8100',
       env: {
         SECRET_KEY: 'kagaj3_prod_secret_change_this_later',
         DATABASE_URL: 'sqlite:///./sql_app.db',
