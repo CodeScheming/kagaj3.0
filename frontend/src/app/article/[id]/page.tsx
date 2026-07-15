@@ -88,6 +88,9 @@ export default function ArticlePage({ params }: { params: Promise<{ id: string }
         value: { blockhash, lastValidBlockHeight }
       } = await connection.getLatestBlockhashAndContext();
       
+      transaction.recentBlockhash = blockhash;
+      transaction.feePayer = publicKey;
+      
       const signature = await sendTransaction(transaction, connection, { minContextSlot });
       await connection.confirmTransaction({ blockhash, lastValidBlockHeight, signature });
       
