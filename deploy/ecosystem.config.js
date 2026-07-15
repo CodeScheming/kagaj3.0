@@ -5,20 +5,13 @@ module.exports = {
   apps: [
     {
       name: 'kagaj-frontend',
-      cwd: './frontend',
+      cwd: '/root/kagaj3.0/frontend',
       script: 'node_modules/.bin/next',
-      args: 'start -p 3000',
+      args: 'start -p 3100',
       env: {
         NODE_ENV: 'production',
-        NEXT_PUBLIC_API_URL: 'https://kagajkokatha.com/api/v2',
+        NEXT_PUBLIC_API_URL: 'https://blogs.kagajkokatha.com/api',
       },
-      // For standalone builds, use this instead:
-      // script: '.next/standalone/server.js',
-      // env: {
-      //   PORT: 3000,
-      //   NODE_ENV: 'production',
-      //   NEXT_PUBLIC_API_URL: 'https://kagajkokatha.com/api/v2',
-      // },
       instances: 1,
       autorestart: true,
       watch: false,
@@ -26,15 +19,15 @@ module.exports = {
     },
     {
       name: 'kagaj-backend',
-      cwd: './backend',
-      interpreter: './venv/bin/python',
+      cwd: '/root/kagaj3.0/backend',
+      interpreter: '/root/kagaj3.0/backend/venv/bin/python',
       script: '-m',
-      args: 'uvicorn main:app --host 0.0.0.0 --port 8000',
+      args: 'uvicorn main:app --host 127.0.0.1 --port 8100',
       env: {
-        SECRET_KEY: 'change_me_to_a_random_secret_key',
+        SECRET_KEY: 'kagaj3_prod_secret_change_this_later',
         DATABASE_URL: 'sqlite:///./sql_app.db',
-        FRONTEND_URL: 'https://kagajkokatha.com',
-        BACKEND_URL: 'https://kagajkokatha.com/api/v2',
+        FRONTEND_URL: 'https://blogs.kagajkokatha.com',
+        BACKEND_URL: 'https://blogs.kagajkokatha.com/api',
       },
       instances: 1,
       autorestart: true,
